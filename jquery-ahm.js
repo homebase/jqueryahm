@@ -4,20 +4,19 @@
  * @author    Sergey <parf@comfi.com>, Jusun <jusun@comfi.com>
  * @copyright 2011 Comfi.com, Sergey Porfiriev, Jusun Lee 
  * @license   MIT License: http://www.jqueryahm.com/license
- * @version   1.1.0
+ * @version   1.3.0
  * @requires  jQuery 1.5+
  */
 jQuery.extend({
 	/**
 	 * ahm jquery extension
-	 * first-class extension, same level as $.ajax(), will not work on selectors
+	 * same level as $.ajax(), will not work on selectors
 	 * @return false
 	 */
-	ahm: function(url, params, options) {
+	ahm: function(url, options) {
 		// default ajax settings
 		var settings = {
-			url:	  url,
-			data:	  params,
+			url: url,
 			dataType: 'json'
 		};
 		if (options) $.extend(settings, options);
@@ -38,11 +37,21 @@ jQuery.extend({
 		
 		// execute callbacks: jquery functions/plugins take precedence
 		var exec = function(selector, callback, params) {
-			// check for callback in params
-			$.each(params, function(index, value) {
-				if (typeof value == 'string' && value.indexOf('function') == 0)
-					params[index] = window['eval']('(' + value + ')');
-			});
+			// check for callback + this in params (object or array)
+			if (typeof params == 'object') {
+				$.each(params, function(index, value) {
+					if (typeof value == 'string' && value.indexOf('function') == 0)
+						params[index] = window['eval']('(' + value + ')');	// yui-compressor hack
+					else if (value == 'this')
+						params[index] = options.context;
+				});
+			}
+			
+			// replace this in selectors + params
+			if (selector == 'this')
+				selector = options.context;
+			if (params == 'this')
+				params = options.context;
 			
 			// get callback namespace
 			if (selector)
@@ -80,28 +89,46 @@ jQuery.extend({
 		if (form.is('form') == false)
 			form = form.closest('form');
 		
-		// get submit + original value
+		// get submit
 		var submit = form.find(':submit');
-		var value  = submit.attr('value');
 		
 		// execute ahm + return
 		var settings = { 
 			type: form.attr('method'),
+			data: form.serialize(),
+			context: form,
 			beforeSend: function(jqXHR, settings) {
-				submit.attr('value', 'Please wait...').attr('disabled', 'disabled');
+				submit.attr('disabled', 'disabled');
 			},
 			complete: function(jqXHR, textStatus) {
-				submit.removeAttr('disabled').attr('value', value);
+				submit.removeAttr('disabled');
 			}
 		};
 		$.extend(settings, options);
-		return $.ahm(form.attr('action'), form.serialize(), settings);
+		return $.ahm(form.attr('action'), settings);
+	},
+	
+	/**
+	 * ahm load extension
+	 * dynamically load javascript only if not previously loaded
+	 * @return null
+	 */
+	ahm_loaded: [],
+	ahm_load: function(url) {
+		if ($.ahm_loaded.indexOf(url) == -1) {
+			$.ahm_loaded.push(url);
+			$.ajax({
+				url:      url,
+				async:    false,
+				dataType: 'script'
+			});
+		}
 	}
 	
 });
 
 // bind default ahm functions
-$(function() {
-	$('a.ahm').click(function() { return $.ahm(this.href); });
+$(function() {	
+	$('a.ahm').click(function() { return $.ahm(this.href, {context:this}); });
 	$('form.ahm').submit(function() { return $.ahm_form(this); });
 });
