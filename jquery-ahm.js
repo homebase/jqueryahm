@@ -129,6 +129,7 @@ jQuery.extend({
 
 // bind default ahm functions
 $(function() {	
-	$('a.ahm').click(function() { return $.ahm(this.href, {context:this}); });
-	$('form.ahm').submit(function() { return $.ahm_form(this); });
+  $('a.ahm').click(function() { return $.ahm(this.href, {context:this}); });
+  $('form.ahm').submit(function() { return $.ahm_form(this); });
+  $('div.ahm,span.ahm').each(function() { if ($(this).attr('href')) $.ahm($(this).attr('href'), {context:this}); });
 });
