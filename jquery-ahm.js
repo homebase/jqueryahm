@@ -4,7 +4,7 @@
  * @author    Sergey <parf@comfi.com>, Jusun <jusun@comfi.com>
  * @copyright 2011 Comfi.com, Sergey Porfiriev, Jusun Lee 
  * @license   MIT License: http://www.jqueryahm.com/license
- * @version   1.3.0
+ * @version   1.3.1
  * @requires  jQuery 1.5+
  */
 jQuery.extend({
