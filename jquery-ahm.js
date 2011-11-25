@@ -4,7 +4,7 @@
  * @author    Sergey <parf@comfi.com>, Jusun <jusun@comfi.com>
  * @copyright 2011 Comfi.com, Sergey Porfiriev, Jusun Lee 
  * @license   MIT License: http://www.jqueryahm.com/license
- * @version   1.3.1
+ * @version   1.4.0
  * @requires  jQuery 1.5+
  */
 jQuery.extend({
@@ -128,8 +128,17 @@ jQuery.extend({
 });
 
 // bind default ahm functions
-$(function() {	
-  $('a.ahm').click(function() { return $.ahm(this.href, {context:this}); });
-  $('form.ahm').submit(function() { return $.ahm_form(this); });
-  $('div.ahm,span.ahm').each(function() { if ($(this).attr('href')) $.ahm($(this).attr('href'), {context:this}); });
+$(function() {
+	$('body').delegate('a.ahm', 'click', function() { return $.ahm(this.href, {context:this}); });
+	$('body').delegate('form.ahm', 'submit', function() { return $.ahm_form(this); });
+
+	$('div.ahm,span.ahm').each(function() { 
+		var el = $(this);
+		if (el.attr('data-url')) {	
+			if (el.attr('data-delay'))
+				setTimeout(function() {$.ahm(el.attr('data-url'), {context:el});}, el.attr('data-delay'));
+			else
+				$.ahm(el.attr('data-url'), {context:el}); 
+		}
+	});
 });
