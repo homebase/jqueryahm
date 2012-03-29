@@ -1,10 +1,11 @@
 /**
  * jquery-ahm: ajax html modification jquery plugin
+ * -uses jquery-do @ git@github.com:homebase/jquerydo.git
  * 
  * @author    Sergey <parf@comfi.com>, Jusun <jusun@comfi.com>
  * @copyright 2011 Comfi.com, Sergey Porfiriev, Jusun Lee 
  * @license   MIT License: http://www.jqueryahm.com/license
- * @version   1.4.0
+ * @version   1.5.0
  * @requires  jQuery 1.5+
  */
 jQuery.extend({
@@ -108,22 +109,30 @@ jQuery.extend({
 		return $.ahm(form.attr('action'), settings);
 	},
 	
-	/**
-	 * ahm load extension
-	 * dynamically load javascript only if not previously loaded
-	 * @return null
-	 */
-	ahm_loaded: [],
-	ahm_load: function(url) {
-		if ($.ahm_loaded.indexOf(url) == -1) {
-			$.ahm_loaded.push(url);
-			$.ajax({
-				url:      url,
-				async:    false,
-				dataType: 'script'
-			});
-		}
-	}
+    'do_loaded': [],
+    'do': function(/* url, callback, params, .. */) {
+        var args = [].slice.apply(arguments); // convert arguments to Array
+        var url = args.shift();
+        var callback = args.shift();
+
+        if (url[0] === ':')
+            url = "/js/" + url.substring(1) + ".js";
+
+        if (typeof callback !== 'function') {
+            var cb = callback;
+            callback = function() {
+                eval(cb).apply(window, args);
+            };
+        }
+
+        if ($.do_loaded.indexOf(url) > -1) {
+            callback();
+            return;
+        }
+
+        $.do_loaded.push(url);
+        $.getScript(url).done(callback);
+    }
 	
 });
 
