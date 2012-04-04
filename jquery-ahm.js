@@ -62,21 +62,13 @@ if (typeof jQuery['ahm'] === 'undefined') {
                     namespace = window;            
                 } else if (jQuery[callback]) {
                     namespace = jQuery;
-                } else if (callback.indexOf('$.') === 0) {
-                    namespace = jQuery;
-                    callback = callback.substring(2);
                 } else if (callback.indexOf('.') !== -1) { // only support dot notation
                     var method = callback.split('.');
                     namespace = window[method[0]];
                     callback = method[1];
-                } else { // todo, regex for class[method] instead of eval
-//                    try {
-//                        namespace = { f: window['eval'](callback) };
-//                        callback = 'f';
-//                    } catch (err) {
-                        alert('ahm: undefined callback='+callback);
-                        return;
-//                    }
+                } else { 
+                    alert('ahm: undefined callback='+callback);
+                    return;
                 }
                 
                 // exec callback
@@ -130,32 +122,28 @@ if (typeof jQuery['ahm'] === 'undefined') {
             var args = [].slice.apply(arguments); // convert arguments to Array
             var url = args.shift();
             var callback = args.shift();
-    
+
             if (url[0] === ':')
                 url = "/js/" + url.substring(1) + ".js";
-    
-            if (typeof callback !== 'function') {
-//                var cb = callback;
-//                callback = function() {
-//                    eval(cb).apply(window, args); // yui compressor hack
-//                };                
 
+            if (typeof callback !== 'function') {
                 var namespace = window;
                 var cb = callback;
-                if (callback.indexOf("$.") != -1) {
-                    namespace = jQuery;
-                    cb = callback.substring(2);
+                var i = callback.indexOf(".");
+                if (i != -1) {
+                    namespace = window[callback.substr(0, i)];
+                    cb = callback.substr(i+1);
                 }
                 callback = function() {
                     namespace[cb].apply(namespace, args);
                 };
             }
-    
+
             if ($.inArray(url, $.run_loaded) != -1) {
                 callback();
                 return;
             }
-    
+
             $.run_loaded.push(url);
             $.getScript(url).done(callback);
         }
