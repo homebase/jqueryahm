@@ -129,12 +129,12 @@ if (typeof jQuery['ahm'] === 'undefined') {
             if (typeof callback !== 'function') {
                 var namespace = window;
                 var cb = callback;
-                var i = callback.indexOf(".");
-                if (i != -1) {
-                    namespace = window[callback.substr(0, i)];
-                    cb = callback.substr(i+1);
-                }
                 callback = function() {
+                    var i = cb.indexOf(".");
+                    if (i != -1) {
+                        namespace = window[cb.substr(0, i)];
+                        cb = cb.substr(i+1);
+                    }
                     namespace[cb].apply(namespace, args);
                 };
             }
