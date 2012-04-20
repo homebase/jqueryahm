@@ -1,3 +1,3 @@
-[submodule "jquerydo"]
-	path = jquerydo
-	url = git@github.com:homebase/jquerydo.git
+[submodule "jqueryrun"]
+	path = jqueryrun
+	url = git@github.com:homebase/jqueryrun.git
