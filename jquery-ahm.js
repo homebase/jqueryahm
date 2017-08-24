@@ -5,7 +5,7 @@
  * @author    Sergey <parf@comfi.com>, Jusun <jusun@comfi.com>
  * @copyright 2011 Comfi.com, Sergey Porfiriev, Jusun Lee 
  * @license   MIT License: http://www.jqueryahm.com/license
- * @version   1.5.1
+ * @version   1.5.2
  * @requires  jQuery 1.5+
  */
 if (typeof jQuery['ahm'] === 'undefined') {
@@ -21,21 +21,21 @@ if (typeof jQuery['ahm'] === 'undefined') {
                 dataType: 'json'
             };
             if (options) $.extend(settings, options);
-            
+
             // actual ajax call
             var ajax = $.ajax(settings);
-            ajax.success(function(response) { 
+            ajax.done(function(response) {
                 $.each(response, function(index, params) {
                     // get selector + callback
                     var action   = index.split('/');
                     var selector = action[0];
                     var callback = action[1] ? action[1] : 'html'; // default callback is html
-    
+
                     // execute ahm callback
                     exec(selector, callback, params);
                 });
             });
-            
+
             // execute callbacks: jquery functions/plugins take precedence
             var exec = function(selector, callback, params) {
                 // check for callback + this in params (object or array)
