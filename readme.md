@@ -1,14 +1,25 @@
-jquery-ahm
-==========
+jquery-ahm & vanilla-ahm
+========================
+
+This repo ships **two libraries** that implement the same `ahm` protocol — pick whichever fits your page:
+
+| library          | file                | dependency | size (min)  |
+|------------------|---------------------|------------|-------------|
+| **jquery-ahm**   | `jquery-ahm.js`     | jQuery 1.5+ | ~2 KB       |
+| **vanilla-ahm**  | `vanilla-ahm.js`    | none        | ~5.5 KB     |
+
+Both expose the same response protocol and the same set of features (`ahm`, `ahm_exec`, `ahm_form`, `ahm_form_modal`, `ahm_load`, auto-binding of `a.ahm` / `form.ahm` / `span.ahm[data-url]` / etc.). The only differences are the namespace (`$.*` vs `AHM.*`) and a handful of implementation-specific behaviors documented further down.
+
+What is `ahm`?
+--------------
 
 `ahm` (ajax html modification) reduces ajax client code by letting the **server response itself describe the callbacks**. One request → server returns a JSON map of `{selector/action: payload}` pairs → AHM applies *all* of them in one pass. The server stays the source of truth for both layout and validation; the client is a thin executor.
 
-* Super light-weight: ~1KB minified
-* Drop-in replacement for `$.ajax()`
-* Works with all jQuery methods + plugins + custom callbacks
+* Super light-weight
+* Drop-in replacement for `$.ajax()` / `fetch()`
+* jQuery version works with all jQuery methods + plugins + custom callbacks
 * No repetitive javascript code for every ajax request
-* Dynamically load scripts on the fly (`$.ahm_load`)
-* Two implementations of the same protocol: **jQuery** (this repo) and **vanilla** (no jQuery dependency)
+* Dynamically load scripts on the fly (`ahm_load`)
 
 Requirements
 ------------
@@ -177,7 +188,15 @@ Uses raw `XMLHttpRequest` (not `$.ajax`):
 Vanilla AHM
 -----------
 
-A jQuery-free implementation of the same protocol. Not part of this repo — see `vanilla-ahm.js` in your project's vanilla AHM bundle.
+**Files:** `vanilla-ahm.js`, `vanilla-ahm.min.js`
+
+A jQuery-free implementation of the same protocol. Drop in directly:
+
+```html
+<script src="vanilla-ahm.min.js"></script>
+```
+
+Exposes a global `AHM` object.
 
 ### API
 
