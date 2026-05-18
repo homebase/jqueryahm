@@ -19,7 +19,7 @@ What is `ahm`?
 * Drop-in replacement for `$.ajax()` / `fetch()`
 * jQuery version works with all jQuery methods + plugins + custom callbacks
 * No repetitive javascript code for every ajax request
-* Dynamically load scripts on the fly (`ahm_load`)
+* Load HTML & Javascript on demand (`ahm_load`)
 
 Requirements
 ------------
@@ -33,7 +33,7 @@ Use AHM for small server-driven UI updates:
 - update input values
 - call simple global page callbacks
 - submit forms without a full page reload
-- popup forms whose HTML is lazy-loaded on demand
+- popup forms whose HTML & Javascript is lazy-loaded on demand
 - server-side form validation (server re-paints all error divs in one response)
 
 Avoid AHM for high-frequency interactions (slider drags, live typing). Each AHM call is a server round-trip — fine for submits and clicks, wrong tool for `oninput`.
